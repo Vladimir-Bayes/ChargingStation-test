@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--Mapper元素只有一个属性namespace，它有两个作用：一是用于区分不同的mapper（在不同的mapper文件里，子元素的id可以相同，mybatis通过namespace和子元素的id联合区分），
+二是与接口关联（应用程序通过接口访问mybatis时，mybatis通过接口的完整名称查找对应的mapper配置，因此namespace的命名务必小心一定要某接口同名）。
+此外，mapper配置文件还有几个顶级子元素（它们须按照顺序定义）-->
+
+<!--与mapper中的接口完全对应-->
+<mapper namespace="com.terabits.mapper.AccountMapper">
+
+    <resultMap id="accountCityInfoMap" type="com.terabits.meta.vo.AccountCityInfoVO">
+        <result property="name" column="name" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.Integer"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="email" column="email" javaType="java.lang.String"></result>
+    </resultMap>
+    
+    <resultMap id="accountAreaInfoMap" type="com.terabits.meta.vo.AccountAreaInfoVO">
+        <result property="name" column="name" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.Integer"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="email" column="email" javaType="java.lang.String"></result>
+        <result property="station" column="station" javaType="java.lang.String"></result>
+    </resultMap>
+    
+    <select id="selectAccountCityInfo" parameterType="com.terabits.meta.bo.AccountCityInfoBO" resultMap="accountCityInfoMap">
+    	select name, phone, type, city, email from t_charge_admin 
+    	<where>
+    		type = 2 or type = 3 or type = 4
+    		<if test="type!=0">
+    			and #{type} = type
+    		</if>
+    		<if test="city!=null">
+    			and #{city} = city
+    		</if>
+    		<if test="phone!=null">
+    			and #{phone} = phone
+    		</if>
+    		<if test="currentType==2 || currentType==3 || currentType==4">
+				and (select city from t_charge_admin where #{currentName}=name) = city
+			</if>
+    	</where>
+    </select>
+    
+    <insert id="insertAccountCity" parameterType="com.terabits.meta.po.AdminPO">
+    	insert into t_charge_admin(name, password, phone, email, city, type) values(#{name}, #{password}, #{phone}, #{email}, #{city}, #{type})
+    </insert>
+    
+    <delete id="deleteAccountCity" parameterType="java.lang.String">
+    	delete from t_charge_admin where phone=#{phone}
+    </delete>
+    
+    <update id="updateAccountCity" parameterType="com.terabits.meta.po.AdminPO">
+    	update t_charge_admin
+    	<set>
+    		<if test="type!=null">
+    			type=#{type},
+    		</if>
+    		<if test="city!=null">
+    			city=#{city},
+    		</if>
+    		<if test="email!=null">
+    			email=#{email},
+    		</if>
+    	</set> 
+    	where phone=#{phone}
+    </update>
+    
+    <select id="selectAccountAreaInfo" parameterType="com.terabits.meta.bo.AccountAreaInfoBO" resultMap="accountAreaInfoMap">
+    	select t_charge_admin.name as name, t_charge_admin.phone as phone, t_charge_admin.type as type, t_charge_admin.city as city, 
+    	t_charge_admin.email as mail, t_charge_site.name as station 
+    	from t_charge_admin left join t_charge_site on t_charge_admin.name = t_charge_site.adminname
+    	<where>
+    		t_charge_admin.type = 5 
+    		<if test="type!=0">
+    			and #{type} = t_charge_admin.type
+    		</if>
+    		<if test="city!=null">
+    			and #{city} = t_charge_admin.city
+    		</if>
+    		<if test="phone!=null">
+    			and #{phone} = t_charge_admin.phone
+    		</if>
+    		<if test="currentType==2 || currentType==3 || currentType==4">
+				and (select city from t_charge_admin where #{currentName}=name) = t_charge_admin.city
+			</if>
+			<if test="currentType==5">
+				and #{currentName} = t_charge_admin.name
+			</if>
+    	</where>
+    </select>
+    
+    <update id="updateAccountArea" parameterType="com.terabits.meta.po.AdminPO">
+    	update t_charge_admin 
+    	<set>
+    		<if test="type!=null">
+    			type=#{type},
+    		</if>
+    		<if test="city!=null">
+    			city=#{city},
+    		</if>
+    		<if test="email!=null">
+    			email=#{email},
+    		</if>
+    	</set> 
+    	where phone=#{phone}
+    </update>
+    
+    <update id="insertAccountAreaSite" parameterType="java.lang.String">
+    	update t_charge_site set adminname=(select name from t_charge_admin where phone=#{phone}), adminphone=#{phone} where name=#{station}
+    </update>
+    
+    <update id="deleteAccountAreaSite" parameterType="java.lang.String">
+    	update t_charge_site set adminname=null, adminphone=null where name=#{station} and adminphone=#{phone}
+    </update>
+    
+    <insert id="insertAccountArea" parameterType="com.terabits.meta.po.AdminPO">
+    	insert into t_charge_admin(name, password, phone, email, city, type) values(#{name}, #{password}, #{phone}, #{email}, #{city}, #{type})
+    </insert>
+    
+    <delete id="deleteAccountArea" parameterType="java.lang.String">
+    	delete from t_charge_admin where phone=#{phone}
+    </delete>
+    
+</mapper>

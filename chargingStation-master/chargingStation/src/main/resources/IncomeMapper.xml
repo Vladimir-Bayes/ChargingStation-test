@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.terabits.mapper.IncomeMapper">
+
+	<resultMap id="testMap" type="com.terabits.meta.po.TestPO">
+		<result property="gid" column="gid" javaType="java.lang.Integer"></result>
+		<result property="name" column="name" javaType="java.lang.String"></result>
+        <result property="password" column="password" javaType="java.lang.String"></result>
+        <result property="sex" column="sex" javaType="java.lang.String"></result>
+	</resultMap>
+	
+	<resultMap id="adminMap" type="com.terabits.meta.po.AdminPO">
+		<result property="gid" column="gid" javaType="java.lang.Integer"></result>
+		<result property="name" column="name" javaType="java.lang.String"></result>
+        <result property="password" column="password" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="email" column="email" javaType="java.lang.String"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.Integer"></result>    
+	</resultMap>
+	
+    <!--查询管理平台登录用户名和密码-->
+    <resultMap id="siteMap" type="com.terabits.meta.po.SitePO">
+        <result property="gid" column="gid" javaType="java.lang.Integer"></result>
+        <result property="name" column="name" javaType="java.lang.String"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="adminname" column="adminname" javaType="java.lang.String"></result>
+        <result property="adminphone" column="adminphone" javaType="java.lang.String"></result>
+    </resultMap>
+
+	<resultMap id="deviceMap" type="com.terabits.meta.po.DevicePO">
+        <result property="gid" column="gid" javaType="java.lang.Integer"></result>
+        <result property="imei" column="imei" javaType="java.lang.String"></result>
+        <result property="deviceid" column="deviceid" javaType="java.lang.String"></result>
+        <result property="selfnumber" column="selfnumber" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.String"></result>
+        <result property="ip" column="ip" javaType="java.lang.String"></result>
+        <result property="status" column="status" javaType="java.lang.Integer"></result>
+        <result property="activation" column="activation" javaType="java.lang.Integer"></result>
+        <result property="siteid" column="siteid" javaType="java.lang.Integer"></result>
+    </resultMap>
+
+	<resultMap id="consumerecordMap" type="com.terabits.meta.po.ConsumerecordPO">
+        <result property="gid" column="gid" javaType="java.lang.Integer"></result>
+        <result property="deviceid" column="deviceid" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.Integer"></result>
+        <result property="payment" column="payment" javaType="java.lang.Double"></result>
+        <result property="status" column="status" javaType="java.lang.Integer"></result>
+        <result property="gmtcreate" column="gmtcreate" javaType="java.lang.String"></result>
+        <result property="gmtmodified" column="gmtmodified" javaType="java.lang.String"></result>
+    </resultMap>
+    
+     <resultMap id="terminalstatisticMap" type="com.terabits.meta.po.TerminalstatisticPO">
+        <result property="gid" column="gid" javaType="java.lang.Integer"></result>
+        <result property="imei" column="imei" javaType="java.lang.String"></result>
+        <result property="sitename" column="sitename" javaType="java.lang.String"></result>
+        <result property="adminname" column="adminname" javaType="java.lang.String"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="gmtcreate" column="gmtcreate" javaType="java.lang.String"></result>
+        <result property="wechatincome" column="wechatincome" javaType="java.lang.Integer"></result>
+        <result property="wechatnumber" column="wechatnumber" javaType="java.lang.Integer"></result>
+        <result property="coinincome" column="coinincome" javaType="java.lang.Integer"></result>
+        <result property="coinnumber" column="coinnumber" javaType="java.lang.Integer"></result>
+        <result property="totalincome" column="totalincome" javaType="java.lang.Integer"></result>
+        <result property="totalnumber" column="totalnumber" javaType="java.lang.Integer"></result>
+    </resultMap>
+    <!-- 在各种标签中的id属性必须和接口中的方法名相同 ， id属性值必须是唯一的，不能够重复使用。parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型-->
+    <!-- useGeneratedKeys：（ 仅 对 insert 有 用 ） 这 会 告 诉 MyBatis 使 用 JDBC 的getGeneratedKeys
+                方法来取出由数据（比如：像 MySQL 和 SQLServer 这样的数据库管理系统的自动递增字段）内部生成的主键。默认值： false。 -->
+    <!--keyProperty： （仅对 insert有用）标记一个属性， MyBatis 会通过 getGeneratedKeys或者通过 insert 语句的 selectKey 子元素设置它的值。默认：不设置。 -->
+    <!--#{}中的内容，为占位符，当参数为某个JavaBean时，表示放置该Bean对象的属性值  -->
+
+	<select id="selectTestPOByName" resultMap="testMap">
+		select * from t_charge_test where name=#{name}
+	</select>
+    
+      <select id="selectAdminPOByCity" resultMap="adminMap">
+    	select * from t_charge_admin where city=#{city} and type=5
+    </select>
+    
+    <select id="selectSitePOByAdminphone" resultMap="siteMap">
+        select * from t_charge_site where adminname=#{adminname}
+    </select>
+    
+    <select id="selectSitePOByCity" resultMap="siteMap">
+    	select * from t_charge_site where city=#{city}
+    </select>
+    
+    <select id="selectDevicePOBySite" resultMap="deviceMap">
+    	select * from t_charge_device where siteid=#{siteid} and activation=1
+    </select>
+    
+    <select id="selectConsumerecordPOByDeviceid" resultMap="consumerecordMap">
+    	select * from t_charge_consumerecord 
+    	  <where>
+    	  	<if test="deviceid != null and deviceid != ''">
+                deviceid=#{deviceid}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and gmtcreate >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and gmtcreate &lt; #{endTime}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectDevicePOByImei" resultMap="deviceMap">
+    	select * from t_charge_device where imei=#{imei}
+    </select>
+    
+    <select id="selectDevicePOByDeviceid" resultMap="deviceMap">
+    	select * from t_charge_device where deviceid=#{deviceid}
+    </select>
+    
+    <select id="selectSitePOBySiteId" resultMap="siteMap">
+    	select * from t_charge_site where gid=#{siteId}
+    </select>
+    
+    <select id="selectSitePOByMark" resultMap="siteMap">
+    	select * from t_charge_site where name=#{mark}
+    </select>
+    
+    <select id="selectAdminPOByAdminName" resultMap="adminMap">
+    	select * from t_charge_admin where name=#{adminName}
+    </select>
+    
+    <select id="selectStatisticPOByImei" resultMap="terminalstatisticMap">
+    	select * from t_charge_terminalstatistic 
+    	 <where>
+    	  	<if test="imei != null and imei != ''">
+                imei=#{imei}
+            </if>
+            <if test="sitename != null and sitename != ''">
+                and sitename = #{sitename}
+            </if>
+             <if test="adminname != null and adminname != ''">
+                and adminname = #{adminname}
+            </if>
+             <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and gmtcreate >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and gmtcreate &lt;= #{endTime}
+            </if>
+          </where>
+          order by imei,gmtcreate
+    </select>
+    
+     <select id="selectStatisticPOBySite" resultMap="terminalstatisticMap">
+    	select * from t_charge_terminalstatistic 
+    	 <where>
+            <if test="sitename != null and sitename != ''">
+                sitename = #{sitename}
+            </if>
+             <if test="adminname != null and adminname != ''">
+                and adminname = #{adminname}
+            </if>
+             <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and gmtcreate >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and gmtcreate &lt;= #{endTime}
+            </if>
+          </where>
+          order by sitename,gmtcreate,imei
+    </select>
+    
+      <select id="selectStatisticPOByAdmin" resultMap="terminalstatisticMap">
+    	select * from t_charge_terminalstatistic 
+    	 <where>
+             <if test="adminname != null and adminname != ''">
+                adminname = #{adminname}
+            </if>
+             <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and gmtcreate >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and gmtcreate &lt;= #{endTime}
+            </if>
+          </where>
+          order by adminname,gmtcreate,sitename,imei
+    </select>
+    
+       <select id="selectStatisticPOByCity" resultMap="terminalstatisticMap">
+    	select * from t_charge_terminalstatistic 
+    	 <where>
+             <if test="city != null and city != ''">
+                city = #{city}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and gmtcreate >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and gmtcreate &lt;= #{endTime}
+            </if>
+          </where>
+          order by city,gmtcreate,adminname,sitename,imei,gmtcreate
+    </select>
+    
+         <select id="selectStatisticPOByImeiAndDate" resultMap="terminalstatisticMap">
+    	select * from t_charge_terminalstatistic 
+    	 <where>
+             <if test="imei != null and imei != ''">
+                imei = #{imei}
+            </if>
+            <if test="date != null and date != ''">
+                and gmtcreate = #{date}
+            </if>
+          </where>
+    </select>
+    
+    <select id="selectAllDevice" resultMap="deviceMap">
+    	select * from t_charge_device where activation=1
+    </select>
+    
+     <insert id="insertStatisticPO" parameterType="com.terabits.meta.po.TerminalstatisticPO" keyProperty="id">
+        insert into t_charge_terminalstatistic 
+        (imei,sitename,adminname,city,gmtcreate,wechatincome,wechatnumber,coinincome,coinnumber,totalincome,totalnumber) 
+        values
+        (#{imei},#{sitename},#{adminname},#{city},#{gmtcreate},#{wechatincome},#{wechatnumber},#{coinincome},#{coinnumber},#{totalincome},#{totalnumber})
+    </insert> 
+    
+    <update id="updateStatisticPO" parameterType="com.terabits.meta.po.TerminalstatisticPO">
+    	update t_charge_terminalstatistic set imei=#{imei},
+    										  sitename=#{sitename},
+    										  adminname=#{adminname},
+    										  city=#{city},
+    										  gmtcreate=#{gmtcreate},
+    	                                      wechatincome=#{wechatincome}, 
+    	                                      wechatnumber=#{wechatnumber},
+    	                                      coinincome=#{coinincome},
+    	                                      coinnumber=#{coinnumber},
+    	                                      totalincome=#{totalincome},
+    	                                      totalnumber=#{totalnumber}
+    	                                where gid=#{gid}
+    </update>
+</mapper> 

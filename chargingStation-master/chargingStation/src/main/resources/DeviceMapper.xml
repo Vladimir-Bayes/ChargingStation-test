@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--Mapper元素只有一个属性namespace，它有两个作用：一是用于区分不同的mapper（在不同的mapper文件里，子元素的id可以相同，mybatis通过namespace和子元素的id联合区分），
+二是与接口关联（应用程序通过接口访问mybatis时，mybatis通过接口的完整名称查找对应的mapper配置，因此namespace的命名务必小心一定要某接口同名）。
+此外，mapper配置文件还有几个顶级子元素（它们须按照顺序定义）-->
+
+<!--与mapper中的接口完全对应-->
+<mapper namespace="com.terabits.mapper.DeviceMapper">
+
+    <!--查询管理平台登录用户名和密码-->
+    <resultMap id="deviceMap" type="com.terabits.meta.vo.DeviceVO">
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="area" column="area" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="station" column="station" javaType="java.lang.String"></result>
+        <result property="address" column="address" javaType="java.lang.String"></result>
+    </resultMap>
+    
+    <resultMap id="boxInfoMap" type="com.terabits.meta.vo.BoxInfoVO">
+        <result property="imei" column="imei" javaType="java.lang.String"></result>
+        <result property="status" column="status" javaType="java.lang.Integer"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="area" column="area" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="station" column="station" javaType="java.lang.String"></result>
+        <result property="version" column="version" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.String"></result>
+    </resultMap>
+    
+    <resultMap id="boxConnectionMap" type="com.terabits.meta.vo.BoxConnectionVO">
+        <result property="imei" column="imei" javaType="java.lang.String"></result>
+        <result property="currentStatus" column="currentStatus" javaType="java.lang.Integer"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="area" column="area" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="station" column="station" javaType="java.lang.String"></result>
+        <result property="version" column="version" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.String"></result>
+        <result property="time" column="time" javaType="java.lang.String"></result>
+        <result property="status" column="status" javaType="java.lang.Integer"></result>
+    </resultMap>
+    
+    <resultMap id="boxConnectionTendaysMap" type="com.terabits.meta.vo.BoxConnectionTendaysVO">
+        <result property="status" column="status" javaType="java.lang.Integer"></result>
+        <result property="station" column="station" javaType="java.lang.String"></result>
+        <result property="imei" column="imei" javaType="java.lang.String"></result>
+        <result property="city" column="city" javaType="java.lang.String"></result>
+        <result property="area" column="area" javaType="java.lang.String"></result>
+        <result property="phone" column="phone" javaType="java.lang.String"></result>
+        <result property="version" column="version" javaType="java.lang.String"></result>
+        <result property="year" column="year" javaType="java.lang.Integer"></result>
+        <result property="month" column="month" javaType="java.lang.Integer"></result>
+        <result property="day" column="day" javaType="java.lang.Integer"></result>
+        <result property="count" column="count" javaType="java.lang.Integer"></result>
+    </resultMap>
+    
+    <resultMap id="cityAreaStationMap" type="com.terabits.meta.vo.CityAreaStationVO">
+    	<result property="city" column="city" javaType="java.lang.String"></result>
+    	<result property="area" column="area" javaType="java.lang.String"></result>
+    	<result property="station" column="station" javaType="java.lang.String"></result>
+    </resultMap>
+
+    <select id="selectDeviceInfo" resultMap="deviceMap">
+        select t_charge_site.city as city, t_charge_site.adminname as area, t_charge_site.adminphone, t_charge_site.name as station, t_charge_site.address as address 
+        from t_charge_site
+        <where>
+        	 <if test="city!=null">
+			 	 and #{city} = t_charge_site.city
+			 </if>
+			 <if test="area!=null">
+				 and #{area} = t_charge_site.adminname
+			 </if>
+			 <if test="station!=null">
+				 and #{station} = t_charge_site.name
+			 </if>
+       	 	 <if test="type==2 || type==3 || type==4">
+				 and (select city from t_charge_admin where #{name}=name) = t_charge_site.city
+			 </if>
+			 <if test="type==5">
+				 and #{name} = t_charge_site.adminname
+			 </if>
+        </where>
+    </select>
+    
+    <insert id="insertSite" parameterType="com.terabits.meta.bo.SiteInsertBO">
+    	insert into t_charge_site(name, city, adminname, adminphone, address, longitude, latitude, gmtcreate, gmtmodified) 
+    	values(#{station}, #{city}, #{adminname}, #{adminphone}, #{address}, #{longitude}, #{latitude}, now(), now())
+    </insert>
+    
+    <select id="selectBoxSiteList" parameterType="java.lang.String" resultType="java.lang.String">
+    	select deviceid from t_charge_device where sitename = #{station}
+    </select>
+    
+    <select id="selectBoxInfo" parameterType="com.terabits.meta.bo.BoxConnectionBO" resultMap="boxInfoMap">
+    	select t_charge_device.imei as imei, t_charge_device.status as status, t_charge_site.city as city, t_charge_site.adminname as area, 
+    	t_charge_site.adminphone as phone, t_charge_device.sitename as station, t_charge_device.version as version, t_charge_device.type as type 
+    	from t_charge_device, t_charge_site
+    	<where>
+    		t_charge_device.siteid = t_charge_site.gid
+    		<if test="city!=null">
+    			and #{city} = t_charge_site.city
+    		</if>
+    		<if test="area!=null">
+    			and #{area} = t_charge_site.adminname
+    		</if>
+    		<if test="station!=null">
+    			and #{station} = t_charge_site.name
+    		</if>
+    		<if test="imei!=null">
+    			and #{imei} = t_charge_device.imei
+    		</if>
+    		<if test="type==2 || type==3 || type==4">
+				and (select city from t_charge_admin where #{name}=name) = t_charge_site.city
+			</if>
+			<if test="type==5">
+				and #{name} = t_charge_site.adminname
+			</if>
+    	</where>
+    </select>
+    
+    <select id="selectBoxConnection" parameterType="java.lang.String" resultMap="boxConnectionMap">
+    	select imei, gmtcreate as time, status from t_charge_connectionrecord
+    	<where>
+    		imei=#{imei} and sitename=#{sitename}
+    		<if test="beginTime!=null">
+    			and t_charge_connectionrecord.gmtcreate >= #{beginTime}
+    		</if>
+    		<if test="endTime!=null">
+    			and t_charge_connectionrecord.gmtcreate &lt; #{endTime}
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="selectBoxConnectionTendays" parameterType="com.terabits.meta.bo.BoxConnectionBO" resultMap="boxConnectionTendaysMap">
+    	select t_charge_device.imei as imei, 
+    	YEAR(t_charge_connectionrecord.gmtcreate) as year, MONTH(t_charge_connectionrecord.gmtcreate) as month, DAY(t_charge_connectionrecord.gmtcreate) as day, 
+    	count(*) as count 
+    	from t_charge_device, t_charge_site, t_charge_connectionrecord 
+    	<where>
+    		t_charge_device.imei = t_charge_connectionrecord.imei 
+    		and t_charge_device.sitename = t_charge_connectionrecord.sitename 
+    		and t_charge_device.siteid = t_charge_site.gid
+    		and t_charge_connectionrecord.status = 10 
+    		<if test="city!=null">
+			 	and #{city} = t_charge_site.city
+			</if>
+			<if test="area!=null">
+				and #{area} = t_charge_admin.name
+			</if>
+			<if test="station!=null">
+				and #{station} = t_charge_site.name
+			</if>
+			<if test="imei!=null">
+				and #{imei} = t_charge_device.imei
+			</if>
+    		<if test="beginTime!=null">
+    			and t_charge_connectionrecord.gmtcreate >= #{beginTime}
+    		</if>
+    		<if test="endTime!=null">
+    			and t_charge_connectionrecord.gmtcreate &lt; #{endTime}
+    		</if>
+    		<if test="type==2 || type==3 || type==4">
+				and (select city from t_charge_admin where #{name}=name) = t_charge_site.city
+			</if>
+			<if test="type==5">
+				and #{name} = t_charge_site.adminname
+			</if>
+    	</where>    	
+    	group by imei, year, month, day 
+    </select>
+    
+    <!-- 查询某一区域负责人管理的所有网点 -->
+    <select id="selectAllStationByArea" parameterType="java.lang.String" resultType="java.lang.String">
+    	select name from t_charge_site where adminphone=#{phone}
+    </select>
+    
+    <!-- 查询所有未分配网点 -->
+    <select id="selectAllStationNoArea" resultType="java.lang.String">
+    	select name from t_charge_site where adminname is null or adminname=''
+    </select>
+    
+    <!-- 登录时查询城市，区域，网点信息 -->
+    <select id="selectCityAreaStation" resultMap="cityAreaStationMap">
+    	select city, adminname as area, name as station from t_charge_site 
+    	<where>
+    		<if test="type==2 || type==3 || type==4">
+				and (select city from t_charge_admin where #{name}=name) = t_charge_site.city
+			</if>
+			<if test="type==5">
+				and #{name} = t_charge_site.adminname
+			</if>
+    	</where>
+    </select>
+    
+    <!-- 验证网点是否属于该用户管理 -->
+    <select id="selectStationCheckAdmin" resultType="java.lang.Integer">
+    	select count(*) from t_charge_site 
+    	<where>
+    		name=#{station}
+    		<if test="type==2 || type==3 || type==4">
+    			and city = (select city from t_charge_admin where name=#{name})
+    		</if>
+    		<if test="type==5">
+				and #{name} = t_charge_site.adminname
+			</if>
+    	</where> 
+    </select>
+    
+    <!-- 验证该网点下的设备是否解绑 -->
+    <select id="selectStationCheckDevice" resultType="java.lang.Integer">
+    	select count(*) from t_charge_site 
+    	<where>
+    		name=#{station}
+    		<if test="type==2 || type==3 || type==4">
+    			and city = (select city from t_charge_admin where name=#{name})
+    		</if>
+    		<if test="type==5">
+				and #{name} = t_charge_site.adminname
+			</if>
+    	</where> 
+    </select>
+    
+    <!-- 删除网点 -->
+    <delete id="deleteStation" parameterType="java.lang.String">
+    	delete from t_charge_site where name=#{station}
+    </delete>
+</mapper>
